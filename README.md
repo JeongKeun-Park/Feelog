@@ -125,6 +125,7 @@
 - 메시지  기능 구현
 
 ▶ 포스트 게시판/마음기록
+- 일기 작성 시 openAI 플랫폼을 활용하여 긍정적인 오늘의 한마디 출력
 - 게시글/마음기록 스크랩(저장)과 좋아요 기능 REST방식으로 구현
 - 게시글/마음기록 목록 조회 시 조회수, 댓글, 좋아요 수 출력
 - 게시글/마음기록의 목록들은 페이징 처리하여 2개씩 보이도록 설정, 더 보기 버튼 클릭 시 추가 조회 기능 구현현
@@ -143,105 +144,91 @@
 
 <h2>6. 트러블슈팅</h2>
 
-트러블 : 여행계획 Insert 테스트 중 이런 오류가 발생했다.
+문제 : service 부분 모듈화 진행중 한 service.js에 너무 많은 fetch가 있었다.
+
 <img src="https://github.com/user-attachments/assets/14b87b2f-38b9-4d48-93c9-a918f4e4efa9"/>
 
-슈팅 : Could not set Parameters for mapping 이라는 오류 단어를 보고 쿼리문을 확인해본 결과 아래와 같은 쿼리문으로 짜여져 있었다.
-
-      <insert id="insert">
-              <selectKey keyProperty="id" order="BEFORE" resultType="long">
-                  SELECT SEQ_PLAN.NEXTVAL FROM DUAL
-              </selectKey>
-              INSERT INTO TBL_PLAN
-              (ID, PLAN_NAME,
-              PLAN_START_DATE,
-              PLAN_END_DATE,
-              PLAN_DEADLINE,
-              PLAN_MAX_PERSONNEL, PLAN_MIN_PERSONNEL, PLAN_PRICE, PLAN_START_ADDRESS,
-              PLAN_CONTENT, MEMBER_ID, COURSE_ID, PLAN_FILE_PATH, PLAN_FILE_SIZE, PLAN_FILE_NAME)
-              VALUES
-              (#{id}, #{planName},
-              TO_DATE(#{planStartDate}, 'YYYY.MM.DD'),
-              TO_DATE(#{planEndDate}, 'YYYY.MM.DD'),
-              TO_DATE(#{planDeadline}, 'YYYY.MM.DD'),
-              #{planMaxPersonnel}, #{planMinPersonnel}, ${planPrice}, #{planStartAddress},
-              #{planContent}, #{memberId}, #{courseId}, #{planFilePath}, #{planFileSize}, #{planFileName})
-          </insert>
-
-자세하게 보지 않아서 몰랐었는데 계속해서 확인해보니 중간에 #이 아니라 $가 들어가 있어서 났던 오류였던걸 확인했다. 
-이런 문제를 겪고나서 쿼리문을 꼼꼼하게 확인하는 습관이 들여졌다.
+해결 : html을 기준으로 모듈화를 하는게 아닌 서비스 기능을 기준으로 모듈화를 한다는 것을 이해하고 기능별로 모듈화를 시켜서 js를 만들었다.
+이렇게 모듈화를 시켜놓으니 중복되는 서비스를 다시 활용하기에도 용이하고, 내가 원하는 서비스를 찾기에도 편리했다.
 
 
-트러블 : 여행계획 수정을 진행하던중 schedule 테이블은 소프트 딜리트를 위해 status 컬럼을 생성해놨다.
-select 쿼리문을 사용하니 그 전에 없어져야 할 데이터가 같이 출력되는 상황이 생겼다.
+문제 : 비공개와 전체공개, 구독자에게만 공개를 나눠서 보여줘야 하는데 로그인이 되어있지 않다면 전체공개인 글만 가져와야 하기 때문에 여기서 여러가지를 시도해보았다.
 
-    planDTO.getDeleteSchedules().forEach((schedule) -> {
-                  ScheduleVO scheduleVO = new ScheduleVO();
-                  scheduleVO.setId(schedule);
-                  scheduleDAO.setSchedule(scheduleVO);
-             });
+해결 : 
+ SELECT *
+        FROM (SELECT d.id           AS id,
+                     m.id           AS member_id,
+                     m.member_nickname,
+                     m.member_file_path,
+                     m.member_file_name,
+                     m.member_status,
+                     d.diary_title,
+                     d.diary_content,
+                     d.diary_open,
+                     d.diary_name_open,
+                     d.diary_file_path,
+                     d.diary_file_name,
+                     d.diary_status,
+                     d.updated_date AS updated_date,
+                     d.diary_read_count,
+                     c.id           AS channel_id,
+                     c.channel_title,
+                     c.channel_url,
+                     c.channel_file_path,
+                     c.channel_file_name,
+                     c.channel_status,
+                     dm.score_message,
+                     d.diary_score
+              FROM tbl_member m
+                       JOIN tbl_diary d ON m.id = d.member_id
+                       JOIN tbl_channel c ON m.id = c.member_id
+                       join tbl_diary_score dm on d.diary_score = dm.id
+              WHERE d.diary_open IN ('전체 공개', '구독자에게만 공개')) d
+        WHERE EXISTS (SELECT 1
+                      FROM tbl_subscribe s
+                      WHERE s.member_id = #{memberId}
+                        AND s.channel_id = d.channel_id)
+           OR d.diary_open = '전체 공개'
 
-슈팅 : Service 쪽에 status를 disable로 변경시켜주지 않고 그대로 가져다 썻기 때문에 생긴 문제였다. 해당 문제는 아래와 같이 코드를 변경하고 해결하였다.
+        UNION
 
-     planDTO.getDeleteSchedules().forEach((schedule) -> {
-                    ScheduleVO scheduleVO = new ScheduleVO();
-                    scheduleVO.setId(schedule);
-                    scheduleVO.setStatus("DISABLED");
-                    scheduleDAO.setSchedule(scheduleVO);
-               });
+        SELECT *
+        FROM (SELECT d.id           AS id,
+                     m.id           AS member_id,
+                     m.member_nickname,
+                     m.member_file_path,
+                     m.member_file_name,
+                     m.member_status,
+                     d.diary_title,
+                     d.diary_content,
+                     d.diary_open,
+                     d.diary_name_open,
+                     d.diary_file_path,
+                     d.diary_file_name,
+                     d.diary_status,
+                     d.updated_date AS updated_date,
+                     d.diary_read_count,
+                     c.id           AS channel_id,
+                     c.channel_title,
+                     c.channel_url,
+                     c.channel_file_path,
+                     c.channel_file_name,
+                     c.channel_status,
+                     dm.score_message,
+                     d.diary_score
+              FROM tbl_member m
+                       JOIN tbl_diary d ON m.id = d.member_id
+                       JOIN tbl_channel c ON m.id = c.member_id
+                       join tbl_diary_score dm on d.diary_score = dm.id
 
+              WHERE d.diary_open = '전체 공개') d
+        WHERE NOT EXISTS (SELECT 1
+                          FROM tbl_subscribe
+                          WHERE member_id = #{memberId})
+        order by id desc
+        limit #{postPagination.offset}, #{postPagination.rowCount}
 
-트러블 : 여행계획 작성 중 파일첨부가 안되서 확인하니 NoSuchFileException이 발생했다.
-<img src="https://github.com/user-attachments/assets/e14cbb57-4a0c-4326-ae6d-f7b7c1399bcb"/>
-
-슈팅 : 파일 업로드하는 Service쪽에서 rootPath가 잘못 설정되어있어서 아래코드와 같이 수정하고 오류를 잡았다.
-
-    String todayPath = getPath();
-            String rootPath = "C:/upload/" + todayPath;
-            String fileName = null;
-            UUID uuid = UUID.randomUUID();
-    
-            try {
-                File directory = new File(rootPath);
-                if(!directory.exists()){
-                    directory.mkdirs();
-                }
-    
-                file.transferTo(new File(rootPath, uuid.toString() + "_" + file.getOriginalFilename()));
-
-
-트러블 : 여행계획 수정 중 DTO에 List형식으로 있는 필드요소들이 기존에 데이터가 없을 때 수정버튼을 누르면 NullPointExeption이 발생했다.
-
-                planDTO.getDeleteExcludes().forEach(writeExcludeDAO::delete);
-                planDTO.getDeleteIncludes().forEach(writeIncludeDAO::delete);
-                planDTO.getDeletePrepares().forEach(writePrepareDAO::delete);
-                planDTO.getDeleteSchedules().forEach((schedule) -> {
-                    ScheduleVO scheduleVO = new ScheduleVO();
-                    scheduleVO.setId(schedule);
-                    scheduleVO.setStatus("DISABLED");
-                    scheduleDAO.setSchedule(scheduleVO);
-               });
-
-슈팅 : 예외처리로 NullPointExeption시 대체시킬 동작이 없기때문에 간단하게 조건식을 걸어 null일 경우에는 메소드를 사용하지 않는 방식으로 해결했다.
-
-    if(planDTO.getDeleteExcludes() != null) {
-                planDTO.getDeleteExcludes().forEach(writeExcludeDAO::delete);
-            }
-            if(planDTO.getDeleteIncludes() != null) {
-                planDTO.getDeleteIncludes().forEach(writeIncludeDAO::delete);
-            }
-            if(planDTO.getDeletePrepares() != null) {
-                planDTO.getDeletePrepares().forEach(writePrepareDAO::delete);
-            }
-            if(planDTO.getDeleteSchedules() != null) {
-                planDTO.getDeleteSchedules().forEach((schedule) -> {
-                    ScheduleVO scheduleVO = new ScheduleVO();
-                    scheduleVO.setId(schedule);
-                    scheduleVO.setStatus("DISABLED");
-                    scheduleDAO.setSchedule(scheduleVO);
-               });
-            }
-
+쿼리문을 위와같이 작성하여 하나의 select쿼리에는 로그인 하였을 때 구독자에게만 공개와 전체공개인 데이터를, 아래의 select 쿼리에는 로그인하지 않았을 때나 로그인한 회원이 구독한 채널이 없을 때 전체공개인 데이터를 가져와 union으로 결과를 합쳐서 조회했다.
 
 
 <h2>7. 느낀점</h2>
