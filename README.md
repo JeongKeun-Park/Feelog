@@ -155,6 +155,7 @@
 문제 : 비공개와 전체공개, 구독자에게만 공개를 나눠서 보여줘야 하는데 로그인이 되어있지 않다면 전체공개인 글만 가져와야 하기 때문에 여기서 여러가지를 시도해보았다.
 
 해결 : 
+```
  SELECT *
         FROM (SELECT d.id           AS id,
                      m.id           AS member_id,
@@ -227,6 +228,7 @@
                           WHERE member_id = #{memberId})
         order by id desc
         limit #{postPagination.offset}, #{postPagination.rowCount}
+  ```
 
 쿼리문을 위와같이 작성하여 하나의 select쿼리에는 로그인 하였을 때 구독자에게만 공개와 전체공개인 데이터를, 아래의 select 쿼리에는 로그인하지 않았을 때나 로그인한 회원이 구독한 채널이 없을 때 전체공개인 데이터를 가져와 union으로 결과를 합쳐서 조회했다.
 
