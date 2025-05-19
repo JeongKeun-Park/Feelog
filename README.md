@@ -65,7 +65,7 @@
 <h2>5. 담당 업무</h2>
 5-1 publishing
 
-<img src="https://github.com/user-attachments/assets/da176157-3262-465e-9d03-14b5277279e4"/>
+<img src="https://github.com/user-attachments/assets/1ea2bc15-84cf-4cde-8a3b-94e133b4da30"/>
 
 ▶ 관리자 페이지
 - 관리자 페이지 홈
@@ -90,8 +90,8 @@
 
 5-2 백엔드
 
-<img src="https://github.com/user-attachments/assets/dea3e737-d30c-4916-abc5-9a98a12317dc"/>
-<img src="https://github.com/user-attachments/assets/dea3e737-d30c-4916-abc5-9a98a12317dc"/>
+<img src="https://github.com/user-attachments/assets/3382db61-4243-4f11-8122-645515cd6963"/>
+<img src="https://github.com/user-attachments/assets/033ce043-2eca-4777-b1be-83d9d61484dd"/>
 
 ▶ 관리자 페이지(REST)
 - 관리자 정보 DB 저장
