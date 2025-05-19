@@ -145,7 +145,6 @@
 <h2>6. 트러블슈팅</h2>
 
 문제 : service 부분 모듈화 진행중 한 service.js에 너무 많은 fetch가 있었다.
-![스크린샷2025-04-29141941]()
 
 <img src="https://github.com/user-attachments/assets/955aad5d-289a-4a4b-bc78-0b05e7910f7f"/>
 
