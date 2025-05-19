@@ -63,7 +63,7 @@
 <img src="https://github.com/user-attachments/assets/3cc006e4-171b-4004-a4a2-04af2f342e03"/>
 
 <h2>5. 담당 업무</h2>
-5-1 publishing![스크린샷 2025-05-19 090205](https://github.com/user-attachments/assets/20446ad8-8d94-496b-9f68-422988a0db01)
+5-1 publishing
 
 <img src="https://github.com/user-attachments/assets/da176157-3262-465e-9d03-14b5277279e4"/>
 
