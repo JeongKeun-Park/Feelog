@@ -145,8 +145,9 @@
 <h2>6. 트러블슈팅</h2>
 
 문제 : service 부분 모듈화 진행중 한 service.js에 너무 많은 fetch가 있었다.
+![스크린샷2025-04-29141941]()
 
-<img src="https://github.com/user-attachments/assets/14b87b2f-38b9-4d48-93c9-a918f4e4efa9"/>
+<img src="https://github.com/user-attachments/assets/955aad5d-289a-4a4b-bc78-0b05e7910f7f"/>
 
 해결 : html을 기준으로 모듈화를 하는게 아닌 서비스 기능을 기준으로 모듈화를 한다는 것을 이해하고 기능별로 모듈화를 시켜서 js를 만들었다.
 이렇게 모듈화를 시켜놓으니 중복되는 서비스를 다시 활용하기에도 용이하고, 내가 원하는 서비스를 찾기에도 편리했다.
@@ -234,7 +235,9 @@
 
 문제 : header.html에 modal.js에 모듈화 시켜 놓은 메시지와 AI서비스의 함수를 사용하려 했지만 모듈화 시켜 놓은 함수에서 not definded 에러가 발생했다.
 
-해결 : 로그를 찍어 확인해보니 modal.js가 항상 먼저 로드가 되었다. modal.js를 가장 아래로 내리고 defer 옵션을 주어도 해결되지 않아서 모듈화로 진행하지 않고 fetch를 modal.js 안에서 함수로 받아서 처리하니까 해결됐다.
+해결 : <img src="https://github.com/user-attachments/assets/579eac49-cb76-4b24-84e2-3fd47039c4b7"/>
+
+로그를 찍어 확인해보니 modal.js가 항상 먼저 로드가 되었다. modal.js를 가장 아래로 내리고 defer 옵션을 주어도 해결되지 않아서 모듈화로 진행하지 않고 fetch를 modal.js 안에서 함수로 받아서 처리하니까 해결됐다.
 
 
 <h2>7. 느낀점</h2>
