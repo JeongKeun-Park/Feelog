@@ -65,7 +65,7 @@
 
 <h2>4. ERD</h2>
 
-<img src="https://github.com/user-attachments/assets/3cc006e4-171b-4004-a4a2-04af2f342e03"/>
+<img src="https://github.com/user-attachments/assets/2357e86f-5406-49a5-ac8e-4dea61ea3208"/>
 
 <h2>5. 담당 업무</h2>
 5-1 퍼블리싱
