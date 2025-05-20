@@ -23,6 +23,7 @@
   - Java
   - Javascript
   - Spring Boot
+  - Fast API
   - MyBatis
   - JSON
   - Thymeleaf
@@ -42,7 +43,6 @@
   - MySql
 
 🌐 API & 외부 서비스
-  - Fast API
   - Kakao Deverlopers (로그인 API)
   - CoolSMS API
   - OpenAI Platform
