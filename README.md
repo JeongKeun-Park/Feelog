@@ -68,7 +68,7 @@
 <img src="https://github.com/user-attachments/assets/3cc006e4-171b-4004-a4a2-04af2f342e03"/>
 
 <h2>5. 담당 업무</h2>
-5-1 publishing
+5-1 퍼블리싱
 
 <img src="https://github.com/user-attachments/assets/1ea2bc15-84cf-4cde-8a3b-94e133b4da30"/>
 
@@ -89,7 +89,7 @@
 - 게시글 및 감정일기 목록, 상세 페이지
 - 익명 감정 게시판 및 응원 게시글 구현
 
-5-2 백엔드
+5-2 서버
 
 <img src="https://github.com/user-attachments/assets/3382db61-4243-4f11-8122-645515cd6963"/>
 <img src="https://github.com/user-attachments/assets/033ce043-2eca-4777-b1be-83d9d61484dd"/>
